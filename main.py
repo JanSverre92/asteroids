@@ -25,13 +25,13 @@ def main():
 	updatable = pygame.sprite.Group()
 	drawable = pygame.sprite.Group()
 	asteroids = pygame.sprite.Group()
-	shot = pygame.sprite.Group()
+	shots = pygame.sprite.Group()
 
 	# Set containers for each class
 	Player.containers = (updatable, drawable)
 	Asteroid.containers = (asteroids, updatable, drawable)
 	AsteroidField.containers = (updatable,)
-	Shot.containers = (updatable, drawable)
+	Shot.containers = (shots,updatable, drawable)
 
 	#Create instances
 	player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -44,17 +44,21 @@ def main():
     # Fill the screen with black
 		screen.fill((0, 0, 0))  # RGB for black
 		updatable.update(dt)
+	# Check for collisions
+		for asteroid in asteroids:
+			for shot in shots:
+				if asteroid.collision(shot):
+					asteroid.split()
+					shot.kill()
+			if asteroid.collision(player):
+				sys.exit("Game over!")
+	# Draws the different shapes
 		for entity in drawable:
 			entity.draw(screen)
 	
     # Update the display
 		pygame.display.flip()
-		dt = clock.tick(60) / 1000
-		
-	# Check for collisions
-		for asteroid in asteroids:
-			if asteroid.collision(player):
-				sys.exit("Game over!")
+		dt = clock.tick(60) / 1000	
 
 if __name__ == "__main__":
     main()
